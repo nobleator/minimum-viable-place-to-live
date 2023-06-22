@@ -1,44 +1,18 @@
 // options.tsx
 import React, { useState } from 'react';
+import { useStorage } from "@plasmohq/storage/hook"
 import Tree from './tree';
 
+const STORAGE_KEY = "mvptl-tree";
+
 function OptionsIndex() {
-  const [treeData, setTreeData] = useState([
+  const [treeData, setTreeData] = useStorage(STORAGE_KEY, [
     {
       id: 1,
       type: 'ConditionalNode',
       operator: 'AND',
-      children: [
-        {
-          id: 2,
-          type: 'ConditionalNode',
-          operator: 'OR',
-          children: [
-            {
-              id: 3,
-              type: 'ValueNode',
-              tag: 'tag1',
-              operator: 'equals',
-              value: 'value1',
-            },
-            {
-              id: 4,
-              type: 'ValueNode',
-              tag: 'tag2',
-              operator: 'greaterThan',
-              value: 'value2',
-            },
-          ],
-        },
-        {
-          id: 5,
-          type: 'ValueNode',
-          tag: 'tag3',
-          operator: 'contains',
-          value: 'value3',
-        },
-      ],
-    },
+      children: []
+    }
   ]);
 
   const handlePrintTree = () => {
