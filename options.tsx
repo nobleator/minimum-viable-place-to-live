@@ -119,7 +119,7 @@ function OptionsIndex() {
 
   return (
     <div>
-      <h1>Tree Structure</h1>
+      <h1>Settings</h1>
       <Tree
         data={treeData}
         onNodeFieldChange={handleNodeFieldChange}
