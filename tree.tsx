@@ -1,5 +1,7 @@
 // tree.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import AsyncCreatableSelect from 'react-select/async-creatable';
 
 const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddConditionalNode }) => {
   const renderTreeNodes = (nodes) => {
@@ -37,14 +39,46 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
     );
   };
 
+  const filterRegions = async (inputValue: string) => {
+    try {
+      const response = await axios.get(`https://pokeapi.co/api/v2/region/`);
+      const matchingOptions = response.data.results.map((region) => ({
+        value: region.name,
+        label: region.name,
+      }));
+      
+      return matchingOptions.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()));
+    } catch (error) {
+      console.log('Error fetching regions:', error);
+      return [];
+    }
+  };
+  
+  const promiseOptions = async (inputValue: string) => {
+    try {
+      return await filterRegions(inputValue);;
+    } catch (error) {
+      console.log('Error fetching regions:', error);
+      return [];
+    }
+  };
+
   const renderValueNode = (node) => {
     return (
       <li key={node.id}>
-        <div>
-          <input
-            type="text"
-            value={node.tag}
-            onChange={(e) => onNodeFieldChange(node.id, 'tag', e.target.value)}
+        <div style={{display: 'flex'}}>
+          <AsyncCreatableSelect
+            cacheOptions
+            defaultOptions
+            value={{value: node.tag, label: node.tag}}
+            loadOptions={promiseOptions}
+            onChange={(e: any) => onNodeFieldChange(node.id, 'tag', e.value)}
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                display: 'flex',
+              }),
+            }}
           />
           <select
             value={node.operator}
