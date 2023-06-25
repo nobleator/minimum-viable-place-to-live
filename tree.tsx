@@ -2,6 +2,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AsyncCreatableSelect from 'react-select/async-creatable';
+import Select from 'react-select';
+
+interface Option {
+  readonly value: string;
+  readonly label: string;
+}
+
+const logicalOperatorOptions: readonly Option[] = [
+  { value: 'AND', label: 'AND', },
+  { value: 'OR', label: 'OR', },
+];
+
+const arthimeticOperatorOptions: readonly Option[] = [
+  { value: 'equals', label: 'equals', },
+  { value: 'greaterThan', label: 'greaterThan', },
+  { value: 'lessThan', label: 'lessThan', },
+];
 
 const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddConditionalNode }) => {
   const renderTreeNodes = (nodes) => {
@@ -18,14 +35,12 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
   const renderConditionalNode = (node) => {
     return (
       <li key={node.id}>
-        <div>
-          <select
-            value={node.operator}
-            onChange={(e) => onNodeFieldChange(node.id, 'operator', e.target.value)}
-          >
-            <option value="AND">AND</option>
-            <option value="OR">OR</option>
-          </select>
+        <div style={{display: 'flex'}}>
+          <Select
+            value={{value: node.operator, label: node.operator}}
+            options={logicalOperatorOptions}
+            onChange={(e) => onNodeFieldChange(node.id, 'operator', e.value)}
+          />
           <button title="Remove conditional node" onClick={() => onRemoveNode(node.id)}>−</button>
           <button title="Add conditional node" onClick={() => onAddConditionalNode(node.id)}>+</button>
         </div>
@@ -80,15 +95,11 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
               }),
             }}
           />
-          <select
-            value={node.operator}
-            onChange={(e) => onNodeFieldChange(node.id, 'operator', e.target.value)}
-          >
-            <option value="equals">equals</option>
-            <option value="greaterThan">greaterThan</option>
-            <option value="lessThan">lessThan</option>
-            <option value="contains">contains</option>
-          </select>
+          <Select
+            value={{value: node.operator, label: node.operator}}
+            options={arthimeticOperatorOptions}
+            onChange={(e) => onNodeFieldChange(node.id, 'operator', e.value)}
+          />
           <input
             type="text"
             value={node.value}
