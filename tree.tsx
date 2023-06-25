@@ -56,10 +56,12 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
 
   const filterRegions = async (inputValue: string) => {
     try {
-      const response = await axios.get(`https://pokeapi.co/api/v2/region/`);
-      const matchingOptions = response.data.results.map((region) => ({
-        value: region.name,
-        label: region.name,
+      // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
+      const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
+      const response = await axios.get(url);
+      const matchingOptions = response.data.data.map((tag) => ({
+        value: tag.key,
+        label: tag.key,
       }));
       
       return matchingOptions.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()));
