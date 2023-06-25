@@ -102,6 +102,13 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
           />
           <input
             type="text"
+            style={{
+              borderColor: 'hsl(0, 0%, 80%)',
+              borderRadius: '4px',
+              borderStyle: 'solid',
+              borderWidth: '1px',
+              boxSizing: 'border-box',
+            }}
             value={node.value}
             onChange={(e) => onNodeFieldChange(node.id, 'value', e.target.value)}
           />
