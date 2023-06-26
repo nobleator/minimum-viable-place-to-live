@@ -20,6 +20,16 @@ const arthimeticOperatorOptions: readonly Option[] = [
   { value: 'lessThan', label: 'lessThan', },
 ];
 
+const debounce = (func, delay) => {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+};
+
 const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddConditionalNode }) => {
   const renderTreeNodes = (nodes) => {
     return nodes.map((node) => {
@@ -54,7 +64,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
     );
   };
 
-  const filterRegions = async (inputValue: string) => {
+  const filterTags = async (inputValue: string, callback: (options: Option[]) => void) => {
     try {
       // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
       const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
@@ -63,20 +73,21 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
         value: tag.key,
         label: tag.key,
       }));
-      
-      return matchingOptions.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()));
+      callback(matchingOptions);
     } catch (error) {
-      console.log('Error fetching regions:', error);
-      return [];
+      console.log('Error fetching tags:', error);
+      callback([]);
     }
   };
-  
-  const promiseOptions = async (inputValue: string) => {
+
+  const debouncedFilterTags = debounce(filterTags, 500);
+
+  const callbackOptions = (inputValue: string, callback: (options: Option[]) => void) => {
     try {
-      return await filterRegions(inputValue);;
+      debouncedFilterTags(inputValue, callback);
     } catch (error) {
-      console.log('Error fetching regions:', error);
-      return [];
+      console.log('Error fetching tags:', error);
+      callback([]);
     }
   };
 
@@ -88,7 +99,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
             cacheOptions
             defaultOptions
             value={{value: node.tag, label: node.tag}}
-            loadOptions={promiseOptions}
+            loadOptions={callbackOptions}
             onChange={(e: any) => onNodeFieldChange(node.id, 'tag', e.value)}
             styles={{
               control: (baseStyles, state) => ({
