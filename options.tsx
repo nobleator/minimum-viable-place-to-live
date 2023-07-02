@@ -3,7 +3,7 @@ import React from 'react';
 import { useStorage } from "@plasmohq/storage/hook"
 import Tree from './tree';
 
-const STORAGE_KEY = "mvptl-tree";
+export const STORAGE_KEY = "mvptl-tree";
 
 function OptionsIndex() {
   const [treeData, setTreeData] = useStorage(STORAGE_KEY, [
