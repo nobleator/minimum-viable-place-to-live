@@ -6,14 +6,17 @@ import Tree from './tree';
 export const STORAGE_KEY = "mvptl-tree";
 
 function OptionsIndex() {
-  const [treeData, setTreeData] = useStorage(STORAGE_KEY, [
-    {
-      id: 1,
-      type: 'ConditionalNode',
-      operator: 'AND',
-      children: []
-    }
-  ]);
+  const [treeData, setTreeData] = useStorage(STORAGE_KEY, {
+    lastModified: Date.now(),
+    data: [
+      {
+        id: 1,
+        type: 'ConditionalNode',
+        operator: 'AND',
+        children: []
+      }
+    ]
+  });
 
   const handlePrintTree = () => {
     console.log(treeData);
@@ -21,25 +24,41 @@ function OptionsIndex() {
 
   const handleNodeFieldChange = (nodeId, field, newValue) => {
     setTreeData((prevTreeData) => {
-      return updateNodeField(prevTreeData, nodeId, field, newValue);
+      return {
+        ...prevTreeData,
+        lastModified: Date.now(),
+        data: updateNodeField(prevTreeData.data, nodeId, field, newValue)
+      };
     });
   };
 
   const handleRemoveNode = (nodeId) => {
     setTreeData((prevTreeData) => {
-      return removeNode(prevTreeData, nodeId);
+      return {
+        ...prevTreeData,
+        lastModified: Date.now(),
+        data: removeNode(prevTreeData.data, nodeId)
+      };
     });
   };
 
   const handleAddValueNode = (parentId) => {
     setTreeData((prevTreeData) => {
-      return addNode(prevTreeData, parentId, 'ValueNode');
+      return {
+        ...prevTreeData,
+        lastModified: Date.now(),
+        data: addNode(prevTreeData.data, parentId, 'ValueNode')
+      };
     });
   };
 
   const handleAddConditionalNode = (parentId) => {
     setTreeData((prevTreeData) => {
-      return addConditionalNode(prevTreeData, parentId);
+      return  {
+        ...prevTreeData,
+        lastModified: Date.now(),
+        data: addConditionalNode(prevTreeData.data, parentId)
+      };
     });
   };
 
@@ -120,8 +139,9 @@ function OptionsIndex() {
   return (
     <div>
       <h1>Settings</h1>
+      <span>Last modified: {treeData.lastModified}</span>
       <Tree
-        data={treeData}
+        data={treeData.data}
         onNodeFieldChange={handleNodeFieldChange}
         onRemoveNode={handleRemoveNode}
         onAddValueNode={handleAddValueNode}
