@@ -10,6 +10,7 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.5.0",
     "@plasmohq/storage": "^1.6.1",
     "axios": "^1.4.0",
     "bottleneck": "^2.19.5",
