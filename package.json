@@ -14,7 +14,7 @@
     "@plasmohq/storage": "^1.6.1",
     "axios": "^1.4.0",
     "bottleneck": "^2.19.5",
-    "plasmo": "0.76.3",
+    "plasmo": "0.80.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-select": "^5.7.3"

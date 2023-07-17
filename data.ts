@@ -1,5 +1,3 @@
-import type { PlasmoMessaging } from "@plasmohq/messaging";
-import { Storage } from "@plasmohq/storage";
 import Bottleneck from "bottleneck";
 // TODO: rename STORAGE_KEY to be more specific
 import { STORAGE_KEY } from "~options";
@@ -67,7 +65,7 @@ const evaluate = async (anchorData, treeData) => {
 }
 
 const needsGeocodingAndEvaluation = (anchorData) => {
-    console.log(`checking for goecoding need: ${JSON.stringify(anchorData)}`);
+    console.log(`checking for geocoding need: ${JSON.stringify(anchorData)}`);
     return !anchorData ||
         (anchorData && !(anchorData.lat || anchorData.lon));
 }
@@ -79,24 +77,41 @@ const needsEvaluation = (anchorData, treeData) => {
             anchorData.lastEvalTime < treeData.lastModified);
 }
 
-const handler: PlasmoMessaging.PortHandler = async (req, res) => {
-    // Note: Can't use hooks within background worker as it is not a React component
-    const storage = new Storage();
-    const anchorKey = req.body.key;
-    const address = req.body.address;
-    let anchorData: any = await storage.get(anchorKey);
-    const treeData: any = await storage.get(STORAGE_KEY);
+export const process = async (anchorData) => {
+    console.log(`processing ${JSON.stringify(anchorData)}`)
+    // TODO: treeData is not loading from options storage anymore. migrate this to localStorage too?
+    // const [treeData, _] = useStorage(STORAGE_KEY);
+    // console.log('tree', JSON.stringify(treeData));
+    const treeData = {
+        "lastModified": 1689593802103,
+        "data": [
+            {
+                "id": 1,
+                "type": "ConditionalNode",
+                "operator": "AND",
+                "children": [
+                    {
+                        "id": 1689593778325,
+                        "type": "ValueNode",
+                        "tag": "cemetery",
+                        "operator": "equals",
+                        "value": "10000"
+                    },
+                    {
+                        "id": 1689593779351,
+                        "type": "ValueNode",
+                        "tag": "Grocery",
+                        "operator": "equals",
+                        "value": "5000"
+                    }
+                ]
+            }
+        ]
+    }
     const limitedGeocodedData = limiter.wrap(getGeocodedData);
     const limitedEval = limiter.wrap(evaluate);
     if (needsGeocodingAndEvaluation(anchorData)) {
-        anchorData = {
-            key: anchorKey,
-            address: address,
-            lat: null,
-            lon: null,
-            evalResult: null,
-            lastEvalTime: null,
-        };
+        console.log(`geocoding required: ${JSON.stringify(anchorData)}`);
         const geocodedData = await limitedGeocodedData(anchorData.address)
             .then(x => { return x; });
         if (geocodedData && geocodedData.length > 0) {
@@ -106,19 +121,12 @@ const handler: PlasmoMessaging.PortHandler = async (req, res) => {
                 .then(x => { return x; });
             anchorData.evalResult = evalResult;
             anchorData.lastEvalTime = Date.now();
-            await storage.set(anchorKey, anchorData);
         }
     } else if (needsEvaluation(anchorData, treeData)) {
         const evalResult = await limitedEval(anchorData, treeData)
             .then(x => { return x; });
         anchorData.evalResult = evalResult;
         anchorData.lastEvalTime = Date.now();
-        await storage.set(anchorKey, anchorData);
     }
-
-    res.send({
-        data: anchorData
-    });
+    return anchorData;
 }
- 
-export default handler
