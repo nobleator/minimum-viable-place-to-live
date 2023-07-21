@@ -11,6 +11,112 @@ const handlePurge = () => {
   }
 }
 
+const handleLoadPersona = (persona, setTreeData) => {
+  if (confirm(`Would you like to replace your settings with the ${persona} persona?`)) {
+    let treeData: any;
+    switch (persona) {
+      case "family": {
+        treeData = {
+          lastModified: Date.now(),
+          data: [
+            {
+              "id": 1,
+              "type": "ConditionalNode",
+              "operator": "AND",
+              "children": [
+                {
+                  "id": 1689593778325,
+                  "type": "ValueNode",
+                  "tag": "elementary_school_district",
+                  "operator": "lessThan",
+                  "value": "1000"
+                },
+                {
+                  "id": 1689593779351,
+                  "type": "ValueNode",
+                  "tag": "Grocery",
+                  "operator": "lessThan",
+                  "value": "5000"
+                },
+                {
+                  "id": 1689900486428,
+                  "type": "ValueNode",
+                  "tag": "PARK",
+                  "operator": "lessThan",
+                  "value": "1000"
+                }
+              ]
+            }
+          ]
+        };
+        break;
+      }
+      case "athlete": {
+        treeData = {
+          lastModified: Date.now(),
+          data: [
+            {
+              "id": 1,
+              "type": "ConditionalNode",
+              "operator": "AND",
+              "children": [
+                {
+                  "id": 1689593778325,
+                  "type": "ValueNode",
+                  "tag": "Gym",
+                  "operator": "lessThan",
+                  "value": "1000"
+                },
+                {
+                  "id": 1689593779351,
+                  "type": "ValueNode",
+                  "tag": "football",
+                  "operator": "lessThan",
+                  "value": "5000"
+                },
+                {
+                  "id": 1689900486428,
+                  "type": "ValueNode",
+                  "tag": "PARK",
+                  "operator": "lessThan",
+                  "value": "1000"
+                },
+                {
+                  "id": 1689901926342,
+                  "type": "ConditionalNode",
+                  "operator": "OR",
+                  "children": [
+                    {
+                      "id": 1689901926343,
+                      "type": "ValueNode",
+                      "tag": "Whole Foods",
+                      "operator": "lessThan",
+                      "value": "6000"
+                    },
+                    {
+                      "id": 1689901951617,
+                      "type": "ValueNode",
+                      "tag": "newTag",
+                      "operator": "equals",
+                      "value": "5000"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+    
+    setTreeData(treeData);
+  }
+}
+
 function IndexPopup() {
   const [treeData, setTreeData] = useStorage(STORAGE_KEY, {
     lastModified: Date.now(),
@@ -158,6 +264,8 @@ function IndexPopup() {
       />
       <button onClick={handlePrintTree}>Print Tree</button>
       <button onClick={handlePurge}>Purge</button>
+      <button onClick={() => handleLoadPersona("family", setTreeData)}>Load Persona: Family</button>
+      <button onClick={() => handleLoadPersona("athlete", setTreeData)}>Load Persona: Athlete</button>
     </div>
   )
 }
