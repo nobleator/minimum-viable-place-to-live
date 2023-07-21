@@ -63,5 +63,7 @@ There are several external APIs used during operation of this extension.
 - [ ] Add drill-down option to see which requirement failed for a given location
 - [ ] Add option for non-binary scores with weighted preferences
 - [ ] Add distance and travel mode options (e.g. walking vs driving)
-- [ ] User guide with sample personas
+- [ ] User guide / onboarding survey with sample personas
+- [ ] Add templates to preference trees (map to personas)
+- [ ] Move preference tree from options to popup window
 - [ ] Add additional OSM tag inputs not hardcoded to "name"
