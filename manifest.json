@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "Annotate Extension",
+  "version": "1.0",
+  "description": "Annotate anchors with custom hash",
+  "permissions": ["activeTab", "storage"],
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://nobleator.github.io/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "applications": {
+    "gecko": {
+      "id": "example@nobleator.github.io"
+    }
+  }
+}
