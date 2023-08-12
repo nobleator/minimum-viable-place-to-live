@@ -1,52 +1,48 @@
 import type { PlasmoCSConfig, PlasmoGetInlineAnchorList } from "plasmo";
-import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
-import { process } from "~data";
 
 export const config: PlasmoCSConfig = {
+    // matches: ["https://nobleator.github.io/"],
     matches: ["https://www.zillow.com/*"],
-    // TODO: test these
-    all_frames: false,
-    world: "MAIN",
 }
 
 export const getInlineAnchorList: PlasmoGetInlineAnchorList = async () =>
     document.querySelectorAll(`address`)
+    // document.querySelectorAll(`.post-title`)
 
 // Use this to optimize unmount lookups
 export const getShadowHostId = ({element}) => `mvptl-uid`
 
 const hashCode = (str) => [...str].reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0);
 
+const process = async (anchorData) => {
+    // Send to background script for processing
+    const resp = await chrome.runtime.sendMessage({ anchorData: anchorData });
+    return resp;
+}
+
+// Processing queue to mark anchors and prevent duplicate executions
+const queue = new Set();
+
 const ZillowOverlay = ({anchor}) => {
     const address = anchor.element.innerText;
-    const anchorKey = `mvptl-${hashCode(address)}`;
-    const [anchorData, setAnchorData] = useStorage({
-        key: anchorKey,
-        instance: new Storage({
-            area: "local"
-        })
-    }, (v) => !v || v === undefined ? {
-        'key': anchorKey,
-        'address': address,
-        'lat': null,
-        'lon': null,
-        'evalResult': null,
-        'lastEvalTime': null,
-    } : v);
+    const anchorKey = hashCode(address);
+    const [anchorData, setAnchorData] = useStorage(anchorKey,
+        (v) => !v || v === undefined ? {
+            'key': anchorKey,
+            'address': address,
+            // 'address': anchorKey > 0 ? "1600 Pennsylvania Avenue NW, Washington, DC" : "701 Constitution Ave. NW, Washington, DC",
+            'lat': null,
+            'lon': null,
+            'evalResult': null,
+            'lastEvalTime': null,
+        } : v);
     
-    // chrome.storage.local does not persist but window.localStorage does
-    // However, localStorage is not a valid option for Plasmo Storage area
-    const result = JSON.parse(window.localStorage.getItem(anchorKey));
-    if (!result && address) {
-        console.log(`anchorData is missing for ${address}: ${result}`);
-        process(anchorData)
-            .then((result) => {
-                window.localStorage.setItem(anchorKey, JSON.stringify(result));
-                setAnchorData(result);
-            });
-    } else { // TODO: only conditionally call this set func?
-        setAnchorData(result);
+    console.log("anchorData", anchorData);
+
+    if (!queue.has(anchorKey) && anchorData && anchorData.evalResult === null) {
+        queue.add(anchorKey);
+        (async () => process(anchorData).then(setAnchorData))();
     }
 
     return (
@@ -56,11 +52,8 @@ const ZillowOverlay = ({anchor}) => {
             borderRadius: 4,
             padding: 4,
             background: (anchorData && anchorData.evalResult) ? "palegreen" : "pink"
-            // background: "palegreen"
         }}>
         { (!anchorData || anchorData.evalResult == null) ? "?" : anchorData.evalResult ? "✓" : "x" }
-        {/* { `${anchorKey} @ ${hailingFrequency.a}` } */}
-        {/* { `${anchorKey}` } */}
         </span>
     )
 }

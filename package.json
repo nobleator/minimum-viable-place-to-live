@@ -14,7 +14,7 @@
     "@plasmohq/storage": "^1.6.1",
     "axios": "^1.4.0",
     "bottleneck": "^2.19.5",
-    "plasmo": "0.80.0",
+    "plasmo": "0.82.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-select": "^5.7.3"
@@ -30,7 +30,13 @@
   },
   "manifest": {
     "host_permissions": [
+      "http://*/*",
       "https://*/*"
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "your-id@example.com"
+      }
+    }  
   }
 }
