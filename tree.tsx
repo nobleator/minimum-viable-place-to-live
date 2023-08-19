@@ -81,17 +81,6 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
     }
   };
 
-  const debouncedFilterTags = debounce(filterTagValues, 500);
-
-  const callbackOptions = (inputValue: string, callback: (options: Option[]) => void) => {
-    try {
-      debouncedFilterTags(inputValue, callback);
-    } catch (error) {
-      console.log('Error fetching tags:', error);
-      callback([]);
-    }
-  };
-
   const renderValueNode = (node) => {
     return (
       <li key={node.id}>
@@ -107,7 +96,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
             cacheOptions
             defaultOptions
             value={{value: node.tagKey, label: node.tagKey}}
-            loadOptions={callbackOptions}
+            loadOptions={debounce(filterTagValues, 500)}
             onChange={(e: any) => onNodeFieldChange(node.id, 'tagKey', e.value)}
             styles={{
               control: (baseStyles, state) => ({
@@ -121,7 +110,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
             cacheOptions
             defaultOptions
             value={{value: node.tagValue, label: node.tagValue}}
-            loadOptions={callbackOptions}
+            loadOptions={debounce(filterTagValues, 500)}
             onChange={(e: any) => onNodeFieldChange(node.id, 'tagValue', e.value)}
             styles={{
               control: (baseStyles, state) => ({
