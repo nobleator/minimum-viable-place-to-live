@@ -30,6 +30,7 @@ const debounce = (func, delay) => {
   };
 };
 
+// TODO: Convert tagKey and tagValue to common object with explicit fields. Requires update to node change tracking.
 const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddConditionalNode }) => {
   const renderTreeNodes = (nodes) => {
     return nodes.map((node) => {
@@ -64,7 +65,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
     );
   };
 
-  const filterTags = async (inputValue: string, callback: (options: Option[]) => void) => {
+  const filterTagValues = async (inputValue: string, callback: (options: Option[]) => void) => {
     try {
       // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
       const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
@@ -80,7 +81,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
     }
   };
 
-  const debouncedFilterTags = debounce(filterTags, 500);
+  const debouncedFilterTags = debounce(filterTagValues, 500);
 
   const callbackOptions = (inputValue: string, callback: (options: Option[]) => void) => {
     try {
@@ -95,12 +96,19 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
     return (
       <li key={node.id}>
         <div style={{display: 'flex'}}>
+          {/* 
+          TODO:
+          Add additional dropdown for tag key in addition to the tag value.
+          Populate dropdown with most common combination by default, but allow user to modify.
+          1) Search by tag value, e.g. grocery, sorting by count_all desc.
+          2) Populate tag key options with top 10-20 most common tag keys associated to tag value
+          */}
           <AsyncCreatableSelect
             cacheOptions
             defaultOptions
-            value={{value: node.tag, label: node.tag}}
+            value={{value: node.tagValue, label: node.tagValue}}
             loadOptions={callbackOptions}
-            onChange={(e: any) => onNodeFieldChange(node.id, 'tag', e.value)}
+            onChange={(e: any) => onNodeFieldChange(node.id, 'tagValue', e.value)}
             styles={{
               control: (baseStyles, state) => ({
                 ...baseStyles,
