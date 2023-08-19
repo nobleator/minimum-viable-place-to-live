@@ -106,6 +106,20 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
           <AsyncCreatableSelect
             cacheOptions
             defaultOptions
+            value={{value: node.tagKey, label: node.tagKey}}
+            loadOptions={callbackOptions}
+            onChange={(e: any) => onNodeFieldChange(node.id, 'tagKey', e.value)}
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                display: 'flex',
+                width: '10em',
+              }),
+            }}
+          />
+          <AsyncCreatableSelect
+            cacheOptions
+            defaultOptions
             value={{value: node.tagValue, label: node.tagValue}}
             loadOptions={callbackOptions}
             onChange={(e: any) => onNodeFieldChange(node.id, 'tagValue', e.value)}
@@ -113,6 +127,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
               control: (baseStyles, state) => ({
                 ...baseStyles,
                 display: 'flex',
+                width: '15em',
               }),
             }}
           />
@@ -129,6 +144,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
               borderStyle: 'solid',
               borderWidth: '1px',
               boxSizing: 'border-box',
+              width: '6em',
             }}
             value={node.value}
             onChange={(e) => onNodeFieldChange(node.id, 'value', e.target.value)}
