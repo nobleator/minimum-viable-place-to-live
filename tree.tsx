@@ -30,21 +30,37 @@ const debounce = (func, delay) => {
   };
 };
 
+const filterTagKeys = async (inputValue: string, callback: (options: Option[]) => void) => {
+  try {
+    // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
+    const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
+    const response = await axios.get(url);
+    const matchingOptions = response.data.data.map((tag) => ({
+      value: tag.key,
+      label: tag.key,
+    }));
+    callback(matchingOptions);
+  } catch (error) {
+    console.log('Error fetching tags:', error);
+    callback([]);
+  }
+};
+
 const filterTagValues = async (inputValue: string, callback: (options: Option[]) => void) => {
-    try {
-      // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
-      const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
-      const response = await axios.get(url);
-      const matchingOptions = response.data.data.map((tag) => ({
-        value: tag.key,
-        label: tag.key,
-      }));
-      callback(matchingOptions);
-    } catch (error) {
-      console.log('Error fetching tags:', error);
-      callback([]);
-    }
-  };
+  try {
+    // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
+    const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
+    const response = await axios.get(url);
+    const matchingOptions = response.data.data.map((tag) => ({
+      value: tag.key,
+      label: tag.key,
+    }));
+    callback(matchingOptions);
+  } catch (error) {
+    console.log('Error fetching tags:', error);
+    callback([]);
+  }
+};
 
 // TODO: Convert tagKey and tagValue to common object with explicit fields. Requires update to node change tracking.
 const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddConditionalNode }) => {
@@ -96,7 +112,7 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
             cacheOptions
             defaultOptions
             value={{value: node.tagKey, label: node.tagKey}}
-            loadOptions={debounce(filterTagValues, 500)}
+            loadOptions={debounce(filterTagKeys, 500)}
             onChange={(e: any) => onNodeFieldChange(node.id, 'tagKey', e.value)}
             styles={{
               control: (baseStyles, state) => ({
