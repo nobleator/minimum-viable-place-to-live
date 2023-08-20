@@ -27,16 +27,16 @@ const handleLoadPersona = (persona, setTreeData) => {
                 {
                   "id": 1689593778325,
                   "type": "ValueNode",
-                  "tagKey": "leisure",
-                  "tagValue": "elementary_school_district",
+                  "tagKey": "school",
+                  "tagValue": "elementary",
                   "operator": "lessThan",
                   "value": "1000"
                 },
                 {
                   "id": 1689593779351,
                   "type": "ValueNode",
-                  "tagKey": "leisure",
-                  "tagValue": "Grocery",
+                  "tagKey": "shop",
+                  "tagValue": "grocery",
                   "operator": "lessThan",
                   "value": "5000"
                 },
@@ -44,8 +44,8 @@ const handleLoadPersona = (persona, setTreeData) => {
                   "id": 1689900486428,
                   "type": "ValueNode",
                   "tagKey": "leisure",
-                  "tagValue": "PARK",
-                  "operator": "lessThanessThan",
+                  "tagValue": "park",
+                  "operator": "lessThan",
                   "value": "1000"
                 }
               ]
@@ -66,16 +66,16 @@ const handleLoadPersona = (persona, setTreeData) => {
                 {
                   "id": 1689593778325,
                   "type": "ValueNode",
-                  "tagKey": "leisure",
-                  "tagValue": "Gym",
+                  "tagKey": "amenity",
+                  "tagValue": "gym",
                   "operator": "lessThan",
                   "value": "1000"
                 },
                 {
                   "id": 1689593779351,
                   "type": "ValueNode",
-                  "tagKey": "leisure",
-                  "tagValue": "football",
+                  "tagKey": "landuse",
+                  "tagValue": "sport",
                   "operator": "lessThan",
                   "value": "5000"
                 },
@@ -83,7 +83,7 @@ const handleLoadPersona = (persona, setTreeData) => {
                   "id": 1689900486428,
                   "type": "ValueNode",
                   "tagKey": "leisure",
-                  "tagValue": "PARK",
+                  "tagValue": "park",
                   "operator": "lessThan",
                   "value": "1000"
                 },
@@ -95,8 +95,16 @@ const handleLoadPersona = (persona, setTreeData) => {
                     {
                       "id": 1689901926343,
                       "type": "ValueNode",
-                      "tagKey": "leisure",
+                      "tagKey": "name",
                       "tagValue": "Whole Foods",
+                      "operator": "lessThan",
+                      "value": "4000"
+                    },
+                    {
+                      "id": 1689901926344,
+                      "type": "ValueNode",
+                      "tagKey": "brand",
+                      "tagValue": "Trader Joe's",
                       "operator": "lessThan",
                       "value": "6000"
                     }
