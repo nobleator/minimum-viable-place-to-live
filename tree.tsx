@@ -30,16 +30,32 @@ const debounce = (func, delay) => {
   };
 };
 
-const filterTagKeys = async (inputValue: string, callback: (options: Option[]) => void) => {
+const filterTagKeys = async (node: any, inputValue: string, callback: (options: Option[]) => void) => {
   try {
-    // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
-    const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
+    // TODO: Searching tag keys when value is populated vs empty
+    // Search by value using the input from the tag value select, then take distinct keys found that match and return those keys as options for the tag key select if they match the input
+    // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_search_by_value";
+    const params = new URLSearchParams({
+      query: node.tagValue,
+      page: "1",
+      rp: "40",
+      sortname: "count_all",
+      sortorder: "desc",
+    });
+    const url = `https://taginfo.openstreetmap.org/api/4/search/by_value?${params.toString()}`;
     const response = await axios.get(url);
-    const matchingOptions = response.data.data.map((tag) => ({
-      value: tag.key,
-      label: tag.key,
-    }));
-    callback(matchingOptions);
+    const keysMatchingValue = response.data.data.map(tag => tag.key);
+    const uniqueKeys = Array.from(new Set<string>(keysMatchingValue));
+    const keysMatchingInput = uniqueKeys
+      .map(x => x.toLowerCase())
+      .filter(y => inputValue.length == 0 || y.includes(inputValue.toLowerCase()))    
+      .map((tagKey) => (
+        {
+          value: tagKey,
+          label: tagKey,
+        }
+      ));
+    callback(keysMatchingInput);
   } catch (error) {
     console.log('Error fetching tags:', error);
     callback([]);
@@ -123,7 +139,9 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
             cacheOptions
             defaultOptions
             value={{value: node.tagKey, label: node.tagKey}}
-            loadOptions={debounce(filterTagKeys, 500)}
+            loadOptions={(inputStr, callbackFunc) => {
+              debounce(filterTagKeys(node, inputStr, callbackFunc), 500);
+            }}
             onChange={(e: any) => onNodeFieldChange(node.id, 'tagKey', e.value)}
             styles={{
               control: (baseStyles, state) => ({
