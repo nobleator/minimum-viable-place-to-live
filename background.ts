@@ -41,7 +41,7 @@ const evaluateNodes = (nodes, targetLat, targetLon) => {
         } else if (node.type === "ValueNode") {
             // TODO: elements have 2 tags, not just 1, need to map "name" to user input rather than hardcoding
             // Tags are searched case insensitive via the "~"" and ",i" parameters
-            query += `nwr["leisure"~"${node.tag}",i](around:${node.value}, ${targetLat}, ${targetLon});`
+            query += `nwr["${node.tagKey}"~"${node.tagValue}",i](around:${node.value}, ${targetLat}, ${targetLon});`
         }
     });
     return query;
