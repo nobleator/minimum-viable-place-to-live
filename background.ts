@@ -34,7 +34,7 @@ const evaluateNodes = (nodes, targetLat, targetLon) => {
             if (node.children.length > 1) {
                 query += "(";
                 query += evaluateNodes(node.children, targetLat, targetLon);
-                query += ")";
+                query += ");";
             } else {
                 query += evaluateNodes(node.children, targetLat, targetLon);
             }
@@ -50,7 +50,7 @@ const evaluateNodes = (nodes, targetLat, targetLon) => {
 const buildOverpassQuery = (anchorData, treeData) => {
     let query = "[out:json];";
     query += evaluateNodes(treeData.data, anchorData.lat, anchorData.lon);
-    query += ";out count;";
+    query += "out count;";
     console.log("overpass query", query);
     return query;
 }
