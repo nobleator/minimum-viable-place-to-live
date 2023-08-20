@@ -48,14 +48,25 @@ const filterTagKeys = async (inputValue: string, callback: (options: Option[]) =
 
 const filterTagValues = async (inputValue: string, callback: (options: Option[]) => void) => {
   try {
-    // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all";
-    const url = `https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=20&sortame=key&sortorder=asc&query=${inputValue}`;
+    // Docs: "https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_search_by_value";
+    const params = new URLSearchParams({
+      query: inputValue,
+      page: "1",
+      rp: "25",
+      sortname: "count_all",
+      sortorder: "desc",
+    });
+    const url = `https://taginfo.openstreetmap.org/api/4/search/by_value?${params.toString()}`;
     const response = await axios.get(url);
-    const matchingOptions = response.data.data.map((tag) => ({
-      value: tag.key,
-      label: tag.key,
-    }));
-    callback(matchingOptions);
+    const matchingOptions = response.data.data.map(tag => tag.value);
+    const uniqueMatches: Option[] = Array.from(new Set<string>(matchingOptions))
+      .map((tagValue) => (
+        {
+          value: tagValue,
+          label: tagValue,
+        }
+      ));
+    callback(uniqueMatches);
   } catch (error) {
     console.log('Error fetching tags:', error);
     callback([]);
