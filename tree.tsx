@@ -15,9 +15,9 @@ const logicalOperatorOptions: readonly Option[] = [
 ];
 
 const arthimeticOperatorOptions: readonly Option[] = [
-  { value: 'equals', label: 'equals', },
-  { value: 'greaterThan', label: 'greaterThan', },
-  { value: 'lessThan', label: 'lessThan', },
+  { value: 'equals', label: '=', },
+  { value: 'greaterThan', label: '>', },
+  { value: 'lessThan', label: '<', },
 ];
 
 const debounce = (func, delay) => {
@@ -166,7 +166,10 @@ const Tree = ({ data, onNodeFieldChange, onRemoveNode, onAddValueNode, onAddCond
             }}
           />
           <Select
-            value={{value: node.operator, label: node.operator}}
+            value={{
+              value: node.operator,
+              label: arthimeticOperatorOptions.filter(x => x.value === node.operator)[0].label
+            }}
             options={arthimeticOperatorOptions}
             onChange={(e) => onNodeFieldChange(node.id, 'operator', e.value)}
           />

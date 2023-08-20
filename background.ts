@@ -31,6 +31,7 @@ const evaluateNodes = (nodes, targetLat, targetLon) => {
     let query = "";
     nodes.forEach((node) => {
         if (node.type === "ConditionalNode") {
+            // TODO: and vs or statements
             if (node.children.length > 1) {
                 query += "(";
                 query += evaluateNodes(node.children, targetLat, targetLon);
@@ -39,7 +40,6 @@ const evaluateNodes = (nodes, targetLat, targetLon) => {
                 query += evaluateNodes(node.children, targetLat, targetLon);
             }
         } else if (node.type === "ValueNode") {
-            // TODO: elements have 2 tags, not just 1, need to map "name" to user input rather than hardcoding
             // Tags are searched case insensitive via the "~"" and ",i" parameters
             query += `nwr["${node.tagKey}"~"${node.tagValue}",i](around:${node.value}, ${targetLat}, ${targetLon});`
         }
