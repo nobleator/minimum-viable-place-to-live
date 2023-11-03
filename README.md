@@ -8,6 +8,35 @@ Supported sites:
 Supported browsers:
 - Chrome (Version 114.0.5735.198)
 
+## Architecture
+TODO: The architecture for this project can be decomposed into several subsystems and/or components:
+- Client for user preference input. This could take several forms, such as a website, CLI, or browser extension. Regardless of the implementation each client would adhere to the same general structure and interface with the same APIs.
+- Tokenizer for user preferences.
+- Parser that converts tokens into an AST.
+- Evaluator that evaluates a given location against the AST, returning a utility score. This should be generalized to allow multiple evaluator implementations, e.g. Overpass, Google Maps, Apple Maps, etc.
+- Caching service that tracks user input changes or data updates for invalidation.
+- Datastore that manages retrieval and storage of data from external locations.
+
+```mermaid
+graph TD
+    Client --> Location
+    Client --> Preferences
+    Preferences --> Tokenizer
+    Preferences <--> Autocomplete
+    Tokenizer --> Parser
+    Parser --> AST
+    AST --> Evaluator
+    Location --> Evaluator
+    Evaluator <--> Cache
+    Autocomplete <--> Cache
+    Cache <--> Datastore
+    Datastore <--> Overpass
+    Datastore <--> GoogleMaps
+    Datastore <--> Zillow
+    Datastore <--> Redfin
+    Datastore <--> ...
+```
+
 ## Getting Started
 
 This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
