@@ -27,21 +27,24 @@ const handleLoadPersona = (persona, setTreeData) => {
                 {
                   "id": 1689593778325,
                   "type": "ValueNode",
-                  "tag": "elementary_school_district",
+                  "tagKey": "school",
+                  "tagValue": "elementary",
                   "operator": "lessThan",
                   "value": "1000"
                 },
                 {
                   "id": 1689593779351,
                   "type": "ValueNode",
-                  "tag": "Grocery",
+                  "tagKey": "shop",
+                  "tagValue": "grocery",
                   "operator": "lessThan",
                   "value": "5000"
                 },
                 {
                   "id": 1689900486428,
                   "type": "ValueNode",
-                  "tag": "PARK",
+                  "tagKey": "leisure",
+                  "tagValue": "park",
                   "operator": "lessThan",
                   "value": "1000"
                 }
@@ -63,21 +66,24 @@ const handleLoadPersona = (persona, setTreeData) => {
                 {
                   "id": 1689593778325,
                   "type": "ValueNode",
-                  "tag": "Gym",
+                  "tagKey": "amenity",
+                  "tagValue": "gym",
                   "operator": "lessThan",
                   "value": "1000"
                 },
                 {
                   "id": 1689593779351,
                   "type": "ValueNode",
-                  "tag": "football",
+                  "tagKey": "landuse",
+                  "tagValue": "sport",
                   "operator": "lessThan",
                   "value": "5000"
                 },
                 {
                   "id": 1689900486428,
                   "type": "ValueNode",
-                  "tag": "PARK",
+                  "tagKey": "leisure",
+                  "tagValue": "park",
                   "operator": "lessThan",
                   "value": "1000"
                 },
@@ -89,16 +95,18 @@ const handleLoadPersona = (persona, setTreeData) => {
                     {
                       "id": 1689901926343,
                       "type": "ValueNode",
-                      "tag": "Whole Foods",
+                      "tagKey": "name",
+                      "tagValue": "Whole Foods",
                       "operator": "lessThan",
-                      "value": "6000"
+                      "value": "4000"
                     },
                     {
-                      "id": 1689901951617,
+                      "id": 1689901926344,
                       "type": "ValueNode",
-                      "tag": "newTag",
-                      "operator": "equals",
-                      "value": "5000"
+                      "tagKey": "brand",
+                      "tagValue": "Trader Joe's",
+                      "operator": "lessThan",
+                      "value": "6000"
                     }
                   ]
                 }
@@ -118,6 +126,7 @@ const handleLoadPersona = (persona, setTreeData) => {
 }
 
 function IndexPopup() {
+  // TODO: send message to background when tree is modified to re-evaluate & propogate to content
   const [treeData, setTreeData] = useStorage(STORAGE_KEY, {
     lastModified: Date.now(),
     data: [
@@ -177,6 +186,7 @@ function IndexPopup() {
   const updateNodeField = (nodes, nodeId, field, newValue) => {
     return nodes.map((node) => {
       if (node.id === nodeId) {
+        // TODO: Handle objects as fields
         return { ...node, [field]: newValue };
       } else if (node.children && node.children.length > 0) {
         return { ...node, children: updateNodeField(node.children, nodeId, field, newValue) };
@@ -203,7 +213,8 @@ function IndexPopup() {
         const newNode = {
           id: Date.now(),
           type: nodeType,
-          tag: 'newTag',
+          tagKey: 'newTagKey',
+          tagValue: 'newTagValue',
           operator: 'equals',
           value: 'newValue',
         };
@@ -230,7 +241,8 @@ function IndexPopup() {
             {
               id: Date.now() + 1,
               type: 'ValueNode',
-              tag: 'newTag',
+              tagKey: 'newTagKey',
+              tagValue: 'newTagValue',
               operator: 'equals',
               value: 'newValue',
             },
@@ -251,7 +263,7 @@ function IndexPopup() {
   return (
     <div
       style={{
-        width: 600,
+        width: 800,
       }}>
       <h1>Settings</h1>
       <span>Last modified: {treeData.lastModified}</span>
