@@ -1,6 +1,6 @@
 ## Minimum Viable Place to Live
 
-This is a browser extension to help identify if a potential home meets your requirements. Users configure their preferences in a tree structure that references OpenStreetMap tags. These preferences include conditional statements as well as arthimatic operators and distance values. When you visit a supported website the page is annotated with a simple ✔️ or ✘ signifying whether the requirements stored in the preference tree are met for a given address.
+This is a browser extension to help identify if a potential home meets your requirements. Users configure their preferences in a tree structure that references OpenStreetMap tags. These preferences include conditional statements as well as arithmetic operators and distance values. When you visit a supported website the page is annotated with a simple ✔️ or ✘ signifying whether the requirements stored in the preference tree are met for a given address.
 
 Supported sites:
 - https://www.zillow.com/
